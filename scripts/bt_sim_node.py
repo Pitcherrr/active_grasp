@@ -24,6 +24,7 @@ from vgn.simulation import apply_noise
 class BtSimNode:
     def __init__(self):
         gui = rospy.get_param("~gui")
+        print("gui: ", gui)
         scene_id = rospy.get_param("~scene")
         vgn_path = rospy.get_param("vgn/model")
         self.sim = Simulation(gui, scene_id, vgn_path)

@@ -55,7 +55,8 @@ class Policy:
         self.bbox = bbox
         self.view_sphere = view_sphere
 
-        self.calibrate_task_frame()
+        self.init_task_frame()
+        # self.calibrate_task_frame()
         self.vis.bbox(self.base_frame, self.bbox)
 
         self.tsdf = UniformTSDFVolume(0.3, 40)
@@ -67,6 +68,7 @@ class Policy:
         self.done = False
         self.info = {}
 
+    #I think this is contraining the frame in which the robot can operate
     def calibrate_task_frame(self):
         xyz = np.r_[self.bbox.center[:2] - 0.15, self.bbox.min[2] - 0.05]
         self.T_base_task = Transform.from_translation(xyz)
@@ -74,6 +76,17 @@ class Policy:
         tf.broadcast(self.T_base_task, self.base_frame, self.task_frame)
         rospy.sleep(1.0)  # Wait for tf tree to be updated
         self.vis.roi(self.task_frame, 0.3)
+
+    def init_task_frame(self):
+        center = np.r_[0.5, 0.0, 0.2]
+        length = 0.3
+        xyz = center - np.r_[0.5 * length, 0.5 * length, 0.0]
+        self.T_base_task = Transform.from_translation(xyz)
+        self.T_task_base = self.T_base_task.inv()
+        tf.broadcast(self.T_base_task, self.base_frame, self.task_frame)
+        rospy.sleep(1.0)  # Wait for tf tree to be updated
+        self.vis.roi(self.task_frame, 0.3)
+
 
     def update(self, img, x, q):
         raise NotImplementedError

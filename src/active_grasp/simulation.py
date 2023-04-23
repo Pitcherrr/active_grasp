@@ -47,6 +47,7 @@ class Simulation:
 
     def load_robot(self):
         panda_urdf_path = urdfs_dir / "franka/panda_arm_hand.urdf"
+        plane = p.loadURDF("plane.urdf")
         self.arm = BtPandaArm(panda_urdf_path)
         self.gripper = BtPandaGripper(self.arm)
         self.model = KDLModel.from_urdf_file(
